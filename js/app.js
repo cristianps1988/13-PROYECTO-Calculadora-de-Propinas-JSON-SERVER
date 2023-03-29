@@ -122,8 +122,98 @@ function agregarPlatillo(producto){
         }else{
             cliente.pedido = [...pedido, producto]
         }
-    }else[
-        console.log('igual a cero')
-    ]
-    console.log(cliente.pedido)
+    }else{
+        // eliminar producto del pedido cuando sea 0
+        const resultado = pedido.filter(articulo => articulo.id !== producto.id)
+        cliente.pedido = [...resultado]
+    }
+    actualizarResumen()        
+}
+
+function actualizarResumen(){
+    limpiarHtml()
+    const contenido = document.querySelector('#resumen .contenido')
+    
+    const resumen = document.createElement('div')
+    resumen.classList.add('col-md-6', 'card', 'py-5', 'px-3', 'shadow')
+
+    const mesa = document.createElement('p')
+    mesa.classList.add('fw-bold')
+    mesa.textContent = 'Mesa: '
+
+    const mesaSpan = document.createElement('span')
+    mesaSpan.classList.add('fw-normal')
+    mesaSpan.textContent = cliente.mesa
+
+    const hora = document.createElement('p')
+    hora.classList.add('fw-bold')
+    hora.textContent = 'hora: '
+
+    const horaSpan = document.createElement('span')
+    horaSpan.classList.add('fw-normal')
+    horaSpan.textContent = cliente.hora
+
+    mesa.appendChild(mesaSpan)
+    hora.appendChild(horaSpan)
+
+    // titulo de la sección
+    const heading = document.createElement('h3')
+    heading.classList.add('my-4', 'text-center')
+    heading.textContent = 'Platillos Consumidos'
+
+    // iterar sobre array de pedidos
+    const grupo = document.createElement('ul')
+    grupo.classList.add('list-group')
+
+    const {pedido} = cliente
+    pedido.forEach(articulo => {
+        const {nombre, precio, cantidad, id} = articulo
+        const lista = document.createElement('li')
+        lista.classList.add('list-group-item')
+
+        const nombreElement = document.createElement('h4')
+        nombreElement.classList.add('my-4')
+        nombreElement.textContent = nombre
+
+        // cantidad del articulo
+        const cantidadElement = document.createElement('p')
+        cantidadElement.classList.add('fw-bold')
+        cantidadElement.textContent = 'Cantidad: '
+
+        const cantidadValor = document.createElement('span')
+        cantidadValor.classList.add('fw-normal')
+        cantidadValor.textContent = cantidad
+        cantidadElement.appendChild(cantidadValor)
+
+        // precio del articulo
+        const precioElement = document.createElement('p')
+        precioElement.classList.add('fw-bold')
+        precioElement.textContent = 'Precio: '
+
+        const precioValor = document.createElement('span')
+        precioValor.classList.add('fw-normal')
+        precioValor.textContent = `$${precio}`
+        precioElement.appendChild(precioValor)
+
+
+        lista.appendChild(nombreElement)
+        lista.appendChild(cantidadElement)
+        lista.appendChild(precioElement)
+
+        grupo.appendChild(lista)
+    })
+
+
+    resumen.appendChild(mesa)
+    resumen.appendChild(hora)
+    resumen.appendChild(heading)
+    resumen.appendChild(grupo)
+    contenido.appendChild(resumen)
+}
+
+function limpiarHtml(){
+    const contenido = document.querySelector('#resumen .contenido')
+    while(contenido.firstChild){
+        contenido.removeChild(contenido.firstChild)
+    }
 }
